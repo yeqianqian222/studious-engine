@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Document</title>
+</head>
+<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+</style>
+<body>
+	<canvas id="canvas" style="position: absolute;left: 0;top: 0;z-index: -1;"></canvas>
+</body>
+</html>
+<script>
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext("2d")
+	
+	canvas.width = window.innerWeight || document.documentElement.clientWidth || document.body.clientWidth;
+	canvas.height = window.innerWeight || document.documentElement.clientHeight || document.body.clientHeight;
+	var points = [];
+	
+	for (i = 0;i < 200 ; i ++){
+		point = {
+			width:Math.random()*5,
+			x:Math.round( Math.random()* canvas.width ),
+			y:Math.round( Math.random()* canvas.height ),
+			vx:(Math.random() )*Math.pow(-1,  Math.floor( Math.random()*100 ) ),
+			vy:(Math.random() )*Math.pow(-1,  Math.floor( Math.random()*100 ) )
+		}
+		points[i] = point;
+	}
+	
+	window.onload = function(){
+		
+		setInterval(function(){
+			ctx.clearRect(0,0,canvas.width,canvas.height)
+			ctx.fillStyle = "black"
+			ctx.fillRect(0,0,canvas.width,canvas.height)
+			drowPoint(ctx);
+			update();
+		},20)
+	}
+	
+	function drowPoint(ctx){
+		
+		for(i = 0;i <　points.length;i++){
+			var o = 1 - points[i].width/10;
+			ctx.beginPath();
+			ctx.arc(points[i].x , points[i].y , points[i].width , 0,Math.PI * 2)
+			ctx.closePath();
+			ctx.fillStyle = "rgba(255,255,255,"+ o +")";
+			
+			ctx.fill();
+		}
+		
+		drawline()
+	}
+	
+	function update(){
+		for(a = 0;a <　points.length;a++){
+			points[a].x = points[a].x + points[a].vx;
+			points[a].y = points[a].y + points[a].vy;
+			
+			if(points[a].x > canvas.width - points[a].width){
+				points[a].x = canvas.width - points[a].width;
+				points[a].vx = - points[a].vx;
+			}
+			
+			if(points[a].x < 0 + points[a].width){
+				points[a].x = 0 + points[a].width;
+				points[a].vx = - points[a].vx;
+			}
+			
+			if(points[a].y > canvas.height - points[a].width){
+				points[a].y = canvas.height - points[a].width;
+				points[a].vy = - points[a].vy;
+			}
+			
+			if(points[a].y < 0 + points[a].width){
+				points[a].y = 0 + points[a].width;
+				points[a].vy = - points[a].vy;
+			}
+		}
+	}
+	
+	function drawline(){
+		
+		for(a = 0;a <　points.length;a++){
+			for(i = 0;i <　points.length;i++){
+				var dist = Math.round(points[a].x - points[i].x) *  Math.round(points[a].x - points[i].x) + Math.round(points[a].y - points[i].y) *  Math.round(points[a].y - points[i].y);
+					
+				if( dist < 10000){
+					ctx.beginPath();
+					ctx.lineWidth = 0.2 - (dist/10000) * 0.2;
+					ctx.strokeStyle = "aqua"
+					ctx.moveTo(points[a].x,points[a].y);
+					ctx.lineTo(points[i].x,points[i].y);
+					ctx.closePath();
+					ctx.stroke();
+				}
+			}
+		}
+		
+	}
+</script>
